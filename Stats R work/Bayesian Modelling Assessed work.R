@@ -6,7 +6,7 @@ invisible(set.seed(999))
 invisible(library(rjags, quietly = TRUE, warn.conflicts = FALSE))
 
 # We load our data from the source
-data <- read.table(file = "C:/Users/User/Documents/programming/Stats R work/datasets/DataSheet6/radon.txt", sep = '') 
+data <- read.table(file = "/datasets/DataSheet6/radon.txt", sep = '') 
 # We convert our data to a data frame
 data <- as.data.frame(data)
 
@@ -75,6 +75,8 @@ for(i in 1:6){
 # and the autocorrelations
 autocorr.plot(pp, lag.max = 50)
 
+
+par(mfrow = c(1,1))
 average_log.radon <- NULL
 observation_number <- NULL
 for(i in 1:length(unique(data[,3]))){
@@ -84,12 +86,12 @@ for(i in 1:length(unique(data[,3]))){
   # number of with basement observations by county
   observation_number <- c(observation_number, nrow(data_basement[j,]))
 }
-par(fig = c(0,0.8,0,1), new = FALSE)
+
+par(mfrow = c())
+
 plot(x = observation_number, y = average_log.radon, type = 'p', xlab = 'number of observations', main = 'Naive median log radon against number of observations')
 minnesota_radon <- median(data_basement[,1])
 abline(h = minnesota_radon)
-par(fig = c(0.6,1,0,1), new = TRUE)
-boxplot(average_log.radon, horiz = TRUE, axes = FALSE)
 
 # we find the average for the values of alpha and beta from our MCMC simulation
 est.alpha <- mean(sample[,1][[1]])
@@ -100,11 +102,9 @@ est.theta <- est.alpha * unique(data[,4])
 est.log.radon <- est.theta + est.beta
 # and a estimated mean for the state
 est.minnesota_radon <- median(est.log.radon)
-par(fig = c(0,0.8,0,1), new = FALSE)
+
 plot(y = est.log.radon, observation_number, xlab = 'number of observations', main = 'MCMC median log radon against the number of observations' )
 abline(h = est.minnesota_radon)
-par(fig = c(0.6,1,0,1), new = TRUE)
-boxplot(est.log.radon, horiz = TRUE, axes = FALSE)
 
 print(paste("We make a prediction of ", est.minnesota_radon, " for the log.radon in Minnesota."))
 
